@@ -1,16 +1,6 @@
 # sqlalchemy-challenge
 Module 10 - SQL Alchemy
-## Jupyter Notebook Database Connection
 
-* Use the SQLAlchemy create_engine() function to connect to your SQLite database (1 point)
-
-* Use the SQLAlchemy automap_base() function to reflect your tables into classes (3 points)
-
-* Save references to the classes named station and measurement (4 points)
- 
-* Link Python to the database by creating a SQLAlchemy session (1 point)
-
-* Close your session at the end of your notebook (1 point)
 
 ## Precipitation Analysis (16 points)
 
