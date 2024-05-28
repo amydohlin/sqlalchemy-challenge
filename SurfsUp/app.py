@@ -123,16 +123,25 @@ def temp_calc(start_date, end_date=None):
     # query to use temp and date data
     temp_obs = [measurement.tobs, measurement.date]
 
-    # define tmin, tmax, tavg
-    tmin = func.min(measurement.tobs).all()
-    tmax = func.max(measurement.tobs).all()
-    tavg = func.avg(measurement.tobs).all()
-
     # query to get the temp data and calculate it
-    temps = session.query(*temp_obs).\
-        tmin = func.min(measurement.tobs).all().\
-        tmax = func.max(measurement.tobs).all().\
-        tavg = func.avg(measurement.tobs).all()
+    # use if-else statements to:
+    if end_date:
+        # get data within a range (i.e. there is both a start and end date)
+        temps = session.query(*temp_obs).\
+            filter(measurement.date >= start_date).\
+            filter(measurement.date <= end_date).all()
+    else:
+        # otherwise only get data on the start date and subsequent dates
+        temps = session.query(*temp_obs).\
+            filter(measurement.date >= start_date).all()
+        
+    # define tmin, tmax, tavg
+    tmin = min([temp[0] for temp in temps])
+    tmax = max([temp[0] for temp in temps])
+    tavg = sum([temp[0] for temp in temps]) / len(temps)
+
+    # close the session
+    session.close()
 
     return {
         'TMIN': tmin,
@@ -153,5 +162,5 @@ def temp_by_date_range(start,end):
     return jsonify(temp_data)
 
 # from 10-3 activity 04, define main behavior
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
