@@ -1,7 +1,10 @@
 # sqlalchemy-challenge
 Module 10 - SQL Alchemy
 
+## Objective
+Use skills learned in module 10 to produce queries on Hawaiian weather data using SQL Alchemy in a Python environment, as well as use Flask to create an API site to display the query results.
 
+--------------------------------------
 ## Precipitation Analysis
 ### 1. Reflect Tables into SQL Alchemy ORM
 - I used the imports and dependencies included in the starter file, but I did add the inspect import on my own.
@@ -34,9 +37,10 @@ Module 10 - SQL Alchemy
   ![alt text]()
 
   Fig 3: precipitation summary statistics
+  
 
 ------------------------------------------------------
-## Station Analysis (16 points)
+## Station Analysis
 * To find the total number of stations, I simply used the `.count()` function and found there are 9 stations.
 * To find the most active stations, I designed a query that went through 'measurement.station' and used:
   * `func.count()` to count the number of rows per unique station,
@@ -56,51 +60,69 @@ Module 10 - SQL Alchemy
   ![alt text]()
 
   Fig 5: temperature histogram for previous 12 months, station USC00519281
+  
 
-## API SQLite Connection & Landing Page (10 points)
+----------------------------------------------
+## API SQLite Connection & Landing Page
+* I kept the same imports on the app.py file that were already included.
+* I set up the database the same way as the climate_starter.ipynb, see figure 6. I used 10-3 activity 10 as a model/reference.
 
-* Correctly generate the engine to the correct sqlite file (2 points)
+  ![alt text]()
 
-* Use automap_base() and reflect the database schema (2 points)
+  Fig 6: database setup for Flask
 
-* Correctly save references to the tables in the sqlite file (measurement and station) (2 points)
+### 1. API Static Routes
+* I started the Flask part by first creating the app with `app = Flask(__name__)`.
+* Once that condition was met, I followed a similar process to code the static routes:
+  * declare a specific route with `@app.route("/[route name here]")`;
+  * create a function with `def [route purpose]():`;
+    * create a session within each `def ()`;
+    * query the data relevant to the route;
+    * close the session;
+    * return the JSON-ified result with `return jsonify([query result])`
+      
+* Using the process outlined above, I then:
+  1. Created a route to the precipitation data, with the `def ()` containing the same query as the climate_starter.ipynb for precipitation data from the last 12 months.
+    * I did create a dictionary of the precipitation query results that was then fed into the jsonify function, see figure 7.
+   
+      ![alt text]()
 
-* Correctly create and binds the session between the python app and database (2 points)
+      Fig 7: code for the app route to precipitation data
 
-* Display the available routes on the landing page (2 points)
+  2. Created a route for a list of the stations within the database, but the `def ()` contained a simple query to get all the station IDs and put them in a list called 'station_list', which was fed into the jsonify function, see figure 8.
+ 
+     ![alt text]()
 
-## API Static Routes (15 points)
+     Fig 8: code for the app route to station list
 
-A precipitation route that:
+  3. Created a route to temperature data, where the `def ()` function contained a query that retrieved the temperatures for the most active station from the last 12 months, and the data was fed into the jsonify function, see figure 9.
+ 
+     ![alt text]()
 
-* Returns json with the date as the key and the value as the precipitation (3 points)
+     Fig 9: code for the app route to the most active station's temperature data, from the last 12 months
+     
 
-* Only returns the jsonified precipitation data for the last year in the database (3 points)
+### 2. API Dynamic Route
+* The dynamic route started with defining a function to calculate the min, max, and avg temperatures for a given start/start and end date, `def temp_calc(start_date, end_date=None):`. I ended up needing to use Xpert Learning Assistant quite a bit for this code since the 10-3 activities did not have much in the way of creating dynamic routes with Flask. See figure 10 for the code for the function that will go into the actual route's function (next segment).
 
-A stations route that:
+  ![alt text]()
 
-* Returns jsonified data of all of the stations in the database (3 points)
+  Fig 10: first function for dynamic route, temp_calc
 
-A tobs route that:
+* After completing the temp_calc function, I defined two routes for the dynamic routes:
+  * `@app.route("/api/v1.0/<start>")` where the temp_calc function was fed into `def temp_by_start_date(start):`, see figure 11.
+  * `@app.route("/api/v1.0/<start>/<end>")` where the temp_calc function was fed into `def temp_by_date_range(start,end):`, see figure 11.
+ 
+    ![alt text]()
 
-* Returns jsonified data for the most active station (USC00519281) (3 points)
+    Fig 11: dynamic routes for route with start date and route with start/end dates
 
-* Only returns the jsonified data for the last year of data (3 points)
+* The static routes worked fine, but something is wrong with the dynamic routes and will produce an error.
+----------------------------------------
+## Summary
+Overall the code in both climate_starter.ipynb and app.py worked as they were supposed to, with the exception of the precipitation data plot, and the dynamic routes in Flask.
 
-## API Dynamic Route (15 points)
-
-A start route that:
-
-* Accepts the start date as a parameter from the URL (2 points)
-
-* Returns the min, max, and average temperatures calculated from the given start date to the end of the dataset (4 points)
-
-A start/end route that:
-
-* Accepts the start and end dates as parameters from the URL (3 points)
-
-* Returns the min, max, and average temperatures calculated from the given start date to the given end date (6 points)
-
+----------------------------------------
 ## Resources
 * Xpert Learning Assistant
 * Module 10 Activities
