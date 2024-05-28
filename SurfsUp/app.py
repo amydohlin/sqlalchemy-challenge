@@ -114,10 +114,44 @@ def temps():
     return jsonify(temp_data)
     
 # -----------------------------------
-# Pull out the temperature values from the temp_data
-# temperatures = [temp[0] for temp in temp_data]
+# Dynamic Route (help from Xpert Learning Assistant)
+# first, define a function that will query the db and compute the temperature statistics
+def temp_calc(start_date, end_date=None):
+    # create session link from Python to db
+    session = Session(engine)
 
-# def temp():
+    # query to use temp and date data
+    temp_obs = [measurement.tobs, measurement.date]
+
+    # define tmin, tmax, tavg
+    tmin = func.min(measurement.tobs).all()
+    tmax = func.max(measurement.tobs).all()
+    tavg = func.avg(measurement.tobs).all()
+
+    # query to get the temp data and calculate it
+    temps = session.query(*temp_obs).\
+        tmin = func.min(measurement.tobs).all().\
+        tmax = func.max(measurement.tobs).all().\
+        tavg = func.avg(measurement.tobs).all()
+
+    return {
+        'TMIN': tmin,
+        'TMAX': tmax,
+        'TAVG': tavg
+    }
+
+# create route for temp calculations with a start date
+@app.route("/api/v1.0/<start>")
+def temp_by_start_date(start):
+    temp_data = temp_calc(start)
+    return jsonify(temp_data)
+
+# create route for temp calculations within a date range
+@app.route("/api/v1.0/<start>/<end>")
+def temp_by_date_range(start,end):
+    temp_data = temp_calc(start,end)
+    return jsonify(temp_data)
+
 # from 10-3 activity 04, define main behavior
 # if __name__ == "__main__":
 #     app.run(debug=True)
